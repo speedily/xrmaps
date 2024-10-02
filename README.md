@@ -18,18 +18,6 @@ You can host a new file by writing the **firebase deploy --only hosting** comman
 
 All your files can be run in local environment using **firebase serve** . You can switch from one to another by clicking a file in the tree.
 
-## Modifying
-
-You can delete the current file by clicking the **Remove** button in the file explorer. The file will be moved into the **Trash** folder and automatically deleted after 7 days of inactivity.
-
-
-## Update a publication
-
-After publishing, StackEdit keeps your file linked to that publication which makes it easy for you to re-publish it. Once you have modified your file and you want to update your publication, click on the **Publish now** button in the navigation bar.
-
-> **Note:** The **Publish now** button is disabled if your file has not been published yet.
-
-
 
 ## Why Havoc?
 
