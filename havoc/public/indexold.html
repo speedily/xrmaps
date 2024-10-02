@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FireDB Hello World</title>
+</head>
+<body>
+  <h1>FireDB Hello World</h1>
+  <form id="myForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name"><br><br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <!--<script src="https://cdn.jsdelivr.net/npm/firebase@7.24.0/dist/firebase-app.js"></script>-->
+  <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+
+  <!--<script src="https://cdn.jsdelivr.net/npm/firebase@7.24.0/dist/firebase-realtime-database.js"></script>-->
+  <script>
+    // Initialize Firebase
+    const app = firebase.initializeApp({
+      apiKey: 'AIzaSyD7Sz29QSUMB_AAA_l9_HdTEdDZCsHg994',
+      authDomain: 'havoc-4047c.firebaseapp.com',
+      projectId: 'havoc-4047c',
+      storageBucket: "havoc-4047c.appspot.com",
+  messagingSenderId: "138747775040",
+  appId: "1:138747775040:web:71688dd4f8c4e53956f7a5",
+  measurementId: "G-2G2B74TTY6",    
+databaseURL: "https://havoc-4047c-default-rtdb.firebaseio.com/"
+    });
+
+    // Get a reference to the Realtime Database
+    const db = firebase.database();
+
+    // Get a reference to the root of the Realtime Database
+    const rootRef = db.ref();
+
+    // Listen for form submissions
+    document.getElementById('myForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      // Write the data to the Realtime Database
+      rootRef.child('users').push({
+        name: name
+      });
+      console.log('Data submitted successfully!');
+    });
+  </script>
+</body>
+</html>

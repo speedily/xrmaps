@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gemini Chat Integration</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<input type="text" id="message-input" placeholder="Enter your message">
+
+<button id="pdf-button">Pdf send to Ai</button>
+
+<button id="send-button">Send</button>
+
+    <div id="chat-container" placeholder="chat appears here">AI chat appears here</div>   
+    
+    <script>
+        $(document).ready(function() {
+
+            $("#pdf-button").click(function() {
+            var link = "http://www.desorissa.nic.in/pdf/dshb-dhenkanal-2020-final.pdf";
+         //upload pdf
+            uploadpdf(link);
+        })
+
+          //var link = "./dhenkanal.pdf";
+         //upload pdf
+         function uploadpdf(link)
+         {
+         $.ajax({
+            url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCdFp0shl_gXc1P2PvzFp6yWN7Ba2kU3BI',
+  crossDomain: true,
+  method: 'post',
+  contentType: 'application/json',
+  data: '{\n      "contents": [{\n        "parts":[\n          {"text": "Can you add a few more lines to this poem?"},\n          {"file_data":{"mime_type": "application/pdf", "file_uri": ' + link + '}}]\n        }]\n       }'
+}).done(function(response) {
+  console.log(response);
+});
+
+} 
+
+
+        // Replace with your Gemini Chat API key
+        // message = 'Explain how AI works';
+        function sendMessage(message) {
+            $.ajax({
+            url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCdFp0shl_gXc1P2PvzFp6yWN7Ba2kU3BI',
+            crossDomain: true,
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+            'contents': [
+            {
+            'parts': [
+            {
+            'text': message
+            }
+            ]
+            }
+            ]
+            })
+            }).done(function(data) {
+  console.log(data);
+  //JSON.stringify(data)
+  var td = JSON.stringify(data.candidates[0].content.parts[0].text);
+  var tr = td.replace(/(?:\r\n|\r|\n)/g, '<br>');
+
+  $("#usagetotaltokens").html(JSON.stringify(data.usageMetadata.totalTokenCount));
+  $("#usageprompttokens").html(JSON.stringify(data.usageMetadata.promptTokenCount));
+  $("#usagecandidatestokens").html(JSON.stringify(data.usageMetadata.candidatesTokenCount));
+
+
+  displayResponse(tr);
+})
+        }
+   
+       
+
+
+    $("#send-button").click(function() {
+            const message = $("#message-input").val();
+            sendMessage(message);
+            $("#message-input").val("");
+        })
+
+    function displayResponse(response) {
+            $("#chat-container").append("<p><strong>Gemini Chat:</strong> " + response + "</p>");
+        }
+
+    })
+     </script>   
+     
+     <p> GEMINI API TOKEN USAGE INFO FOR EVERY CHAT:</p>
+
+        <div> Prompt Tokens: <span id="usageprompttokens"></span></div>
+        <div> Candidates Tokens: <span id="usagecandidatestokens"></span></div>  
+        <div> Total Tokens: <span id="usagetotaltokens"></span></div>
+     
+</body>
+</html>
+

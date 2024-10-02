@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "havoc"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "havoc-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

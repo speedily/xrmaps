@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Demo Application</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./css/w3.css">
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+<script
+        id="search-js"
+        defer
+        src="https://api.mapbox.com/search-js/v1.0.0-beta.22/web.js"
+    >
+    </script>
+    <script>
+        const script = document.getElementById('search-js');
+        script.onload = function() {
+            mapboxsearch.autofill({
+                accessToken: 'pk.eyJ1IjoiaGVsbG9hYmhpc2hla2poYSIsImEiOiJjbTFwMmY0MHcxOGY3MmtxeDBvMnllbG9mIn0.KCd-aaebsxH3EzjwctscOQ'
+            });
+        };
+    </script>
+
+<script type="importmap">
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { GoogleGenerativeAI,  HarmCategory,
+        HarmBlockThreshold, } from "@google/generative-ai";
+</script>
+
+<script type="module" src='./indexold.js'></script>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+<link href='https://unpkg.com/maplibre-gl/dist/maplibre-gl.css' rel='stylesheet' />
+
+<script src="./js/jquery-3.7.1.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+
+<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+
+<link href="./js/select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="./js/select2-4.1.0-rc.0/dist/js/select2.full.min.js"></script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.w3-sidebar a {font-family: "Roboto", sans-serif}
+body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
+
+/* 
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+*/
+
+#menu {
+        position: absolute;
+        background: #efefef;
+        padding: 10px;
+        font-family: 'Open Sans', sans-serif;
+    }
+.mapboxgl-popup {
+        max-width: 400px;
+        font:
+            12px/20px 'Helvetica Neue',
+            Arial,
+            Helvetica,
+            sans-serif;
+    }
+/*    
+.mapboxgl-marker {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border:1px solid gray;
+    background-color:lightblue;
+}
+
+ */ 
+ .marker {
+        display: block;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 0;
+    }      
+</style>
+
+</head>
+<body class="w3-content" style="max-width:1200px">
+<script>
+
+
+function formatState (state) {
+  if (!state.id) {
+    return state.text;
+  }
+  var baseUrl = "./images/complaint";
+  var $state = $(
+    '<span><img src="' + baseUrl + '/' + state.element.value.toLowerCase() + '.png" class="img-flag" /> ' + state.text + '</span>'
+  );
+  return $state;
+};
+
+$(document).ready(function() {
+$(".js-example-templating").select2({
+  templateResult: formatState
+});
+});
+ 
+    $( function() {
+      $( "#tabs" ).tabs();
+    } );
+
+    </script>
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-bar-block w3-white w3-collapse w3-top" style="width:400px" id="mySidebar">
+  <div class="w3-container w3-display-container w3-padding-16">
+    <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright" ></i>
+    <h10 class="w3-wide"><b><img src="./images/gooey.gif" style="width: 32px; height: 32px;" /> HAVOC - CITY AI & RTCMS </b></h10>
+  </div>
+  
+  <div id="tabs">
+    <ul>
+      <li><a href="#tabs-1"> <i class="fa-solid fa-person-harassing"></i> Realtime Complain</a></li>
+      <li><a href="#tabs-2"> <i class="fa-solid fa-robot"></i> Use Google AI</a></li>
+    </ul>
+    <div id="tabs-1">
+        <form id="myForm">
+              <div class="w3-container w3-blue">
+                <h3>Complaint Form</h3>
+              </div>
+              
+              <div class="w3-container">
+
+                <h3>Complain About?</h3>
+         
+
+                <select class="js-example-basic-single" style="width:100%;" name="state">
+                    <optgroup label="Electricity Company">
+                    <option value="1">Broken Street Lights</option>
+                    </optgroup>
+                    <optgroup label="Municipal Corporation">
+                        <option value="2">Air Pollution</option>
+                        <option value="3">Garbage Dump</option>
+                        <option value="4">Overflooding Lake</option>
+                    </optgroup>
+                    <optgroup label="Traffic Police">
+                        <option value="5">Road Accident </option>
+                        <option value="6">Public Transport(Bus/Cab/Auto)</option>
+                        <option value="7">Crowded Buses</option>
+                    </optgroup>
+                    <optgroup label="City Police">
+                        <option value="8">Crime</option>
+                        <option value="9">Bribe</option>
+                        <option value="10">Terrorism Hint</option>
+                    </optgroup>
+                    <optgroup label="Human Rights & NGOs">
+                        <option value="11">Office Abuse</option>
+                        <option value="12">Dumped Child/Elders</option>
+                        <option value="13">New Stray Animals</option>
+                    </optgroup>
+                  </select>   
+
+                <p>
+                <label>Your Name(Write 'Telegram' If Anonymous)</label>
+                <input class="w3-input" type="text" placeholder="Your name.." id="rtname">
+                </p>
+                <p>
+                <label>Any 1 Contact Info(Phone/Email/Telegram Handle(If Anonymous))</label>
+                <input class="w3-input" type="text" placeholder="Contact Info.." id="rtcontact"></p>
+
+                <p>
+                    <label>Type & Select Location Of Issue(Address)</label>
+                    <input class="w3-input" type="text" placeholder="Write Location Here.." id="rtloca" autocomplete="address-line1"></p>
+                
+                 <p>
+                        <label>Written Details Of Issue</label>
+                        <textarea class="w3-input" placeholder="Subject &amp; Matter" id="rtwritten"></textarea>
+                 <p>
+                 
+                 <p>
+                        <label>Link To Photo/Video Of Issue</label>
+                        <input class="w3-input" type="text" placeholder="Paste Link Here.." id="rtlink"></p>
+                 <p>  
+            
+              <input type="submit" class="w3-button w3-block w3-blue" value="Submit" >
+              </div>
+        </form>
+    </div>
+
+
+    <div id="tabs-2">
+        <form id="AIFiFo">
+        <h2>Use Google Ai</h2>
+        <!-- <p>1. You can train AI with data pdf etc</p>-->
+
+        <p>1. You Can ask AI about The Creator, City, Etc</p>
+
+        
+        <!-- <label>Link To PDF/Excel CSV To Train AI</label>
+
+        <input class="w3-input" type="file" id="avatar" name="avatar" accept=".csv,.pdf"  />
+        <p>  
+            <input type="submit" value="Upload File" class="w3-button w3-block w3-yellow" id="uploadtraining">
+            <div id="UploadingStatus" style="text-align: center;"> </div>
+        </form>
+
+    <p></p>
+
+    <input type="submit" value="Train AI" class="w3-button w3-block  w3-blue">
+    <div id="TrainingStatus"></div> -->
+
+     
+
+    <!--<p>2. You Can Ask AI about your trained data</p>
+    <form id="AIChat">-->
+        
+        <textarea id="message-input" class="w3-input" placeholder="Ask Gemini 1.5 Flash Regarding Creator Information"></textarea> <br/>
+        <input id="send-button" type="button" value="Ask Gen AI Gemini 1.5" class="w3-button w3-block w3-blue"> <br/>
+        <div id="chat-container" placeholder="chat appears here" style="width:350px; height: 240px;">AI chat appears here</div>
+    
+        
+        
+             
+            
+            
+    <!--</form>-->
+
+    <div> GEMINI API TOKEN USAGE INFO Per/CHAT:</div>
+    <div> Prompt Tokens: <span id="usageprompttokens"></span></div>
+    <div> Candidates Tokens: <span id="usagecandidatestokens"></span></div>  
+    <div> Total Tokens: <span id="usagetotaltokens"></span></div>
+
+    </div>
+
+    
+
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-bar w3-top w3-hide-large w3-black w3-xlarge">
+  <div class="w3-bar-item w3-padding-24 w3-wide">HAVOC</div>
+  <a href="javascript:void(0)" class="w3-bar-item w3-button w3-padding-24 w3-right" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:410px">
+
+  <!-- Push down content on small screens -->
+  <div class="w3-hide-large" style="margin-top:83px"></div>
+  
+  <!-- Top header -->
+  <header class="w3-container w3-large">
+    <div class="w3-bar-item w3-padding-24 w3-wide"> Bengaluru City AI & Realtime Complaint System</div>
+  </header>
+
+
+  <!-- Product grid -->
+  <div id='map' style='width: 100% !important; height: 400px !important;'></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaGVsbG9hYmhpc2hla2poYSIsImEiOiJjbTFwMmY0MHcxOGY3MmtxeDBvMnllbG9mIn0.KCd-aaebsxH3EzjwctscOQ';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [77.6309395, 12.9539974],
+        zoom: 11.15
+    });
+    map.addControl(new mapboxgl.NavigationControl());
+    map.on('load', () => {
+        map.addSource('places', {
+            // This GeoJSON contains features that include an "icon"
+            // property. The value of the "icon" property corresponds
+            // to an image in the Mapbox Streets style's sprite.
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Make it Mount Pleasant</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a> is a handmade and vintage market and afternoon of live entertainment and kids activities. 12:00-6:00 p.m.</p>',
+                            'icon': 'theatre'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.038659, 38.931567]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Mad Men Season Five Finale Watch Party</strong><p>Head to Lounge 201 (201 Massachusetts Avenue NE) Sunday for a <a href="http://madmens5finale.eventbrite.com/" target="_blank" title="Opens in a new window">Mad Men Season Five Finale Watch Party</a>, complete with 60s costume contest, Mad Men trivia, and retro food and drink. 8:00-11:00 p.m. $10 general admission, $20 admission and two hour open bar.</p>',
+                            'icon': 'theatre'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.003168, 38.894651]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Big Backyard Beach Bash and Wine Fest</strong><p>EatBar (2761 Washington Boulevard Arlington VA) is throwing a <a href="http://tallulaeatbar.ticketleap.com/2012beachblanket/" target="_blank" title="Opens in a new window">Big Backyard Beach Bash and Wine Fest</a> on Saturday, serving up conch fritters, fish tacos and crab sliders, and Red Apron hot dogs. 12:00-3:00 p.m. $25.grill hot dogs.</p>',
+                            'icon': 'bar'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.090372, 38.881189]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Ballston Arts & Crafts Market</strong><p>The <a href="http://ballstonarts-craftsmarket.blogspot.com/" target="_blank" title="Opens in a new window">Ballston Arts & Crafts Market</a> sets up shop next to the Ballston metro this Saturday for the first of five dates this summer. Nearly 35 artists and crafters will be on hand selling their wares. 10:00-4:00 p.m.</p>',
+                            'icon': 'art-gallery'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.111561, 38.882342]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Seersucker Bike Ride and Social</strong><p>Feeling dandy? Get fancy, grab your bike, and take part in this year\'s <a href="http://dandiesandquaintrelles.com/2012/04/the-seersucker-social-is-set-for-june-9th-save-the-date-and-start-planning-your-look/" target="_blank" title="Opens in a new window">Seersucker Social</a> bike ride from Dandies and Quaintrelles. After the ride enjoy a lawn party at Hillwood with jazz, cocktails, paper hat-making, and more. 11:00-7:00 p.m.</p>',
+                            'icon': 'bicycle'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.052477, 38.943951]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Capital Pride Parade</strong><p>The annual <a href="http://www.capitalpride.org/parade" target="_blank" title="Opens in a new window">Capital Pride Parade</a> makes its way through Dupont this Saturday. 4:30 p.m. Free.</p>',
+                            'icon': 'rocket'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.043444, 38.909664]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Muhsinah</strong><p>Jazz-influenced hip hop artist <a href="http://www.muhsinah.com" target="_blank" title="Opens in a new window">Muhsinah</a> plays the <a href="http://www.blackcatdc.com">Black Cat</a> (1811 14th Street NW) tonight with <a href="http://www.exitclov.com" target="_blank" title="Opens in a new window">Exit Clov</a> and <a href="http://godsilla.bandcamp.com" target="_blank" title="Opens in a new window">Gods’illa</a>. 9:00 p.m. $12.</p>',
+                            'icon': 'music'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.031706, 38.914581]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>A Little Night Music</strong><p>The Arlington Players\' production of Stephen Sondheim\'s  <a href="http://www.thearlingtonplayers.org/drupal-6.20/node/4661/show" target="_blank" title="Opens in a new window"><em>A Little Night Music</em></a> comes to the Kogod Cradle at The Mead Center for American Theater (1101 6th Street SW) this weekend and next. 8:00 p.m.</p>',
+                            'icon': 'music'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.020945, 38.878241]
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'description':
+                                '<strong>Truckeroo</strong><p><a href="http://www.truckeroodc.com/www/" target="_blank">Truckeroo</a> brings dozens of food trucks, live music, and games to half and M Street SE (across from Navy Yard Metro Station) today from 11:00 a.m. to 11:00 p.m.</p>',
+                            'icon': 'music'
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [-77.007481, 38.876516]
+                        }
+                    }
+                ]
+            }
+        });
+        // Add a layer showing the places.
+        map.addLayer({
+            'id': 'places',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+                'icon-image': ['get', 'icon'],
+                'icon-allow-overlap': true
+            }
+        });
+
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', 'places', (e) => {
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            if (['mercator', 'equirectangular'].includes(map.getProjection().name)) {
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+            }
+
+            new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'places', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'places', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    });
+  </script>
+
+
+<!-- <iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/helloabhishekjha/cm1qft5f600tq01r27l1c9hdo.html?title=false&access_token=pk.eyJ1IjoiaGVsbG9hYmhpc2hla2poYSIsImEiOiJjbTFwMmY0MHcxOGY3MmtxeDBvMnllbG9mIn0.KCd-aaebsxH3EzjwctscOQ&zoomwheel=false#9.93/12.9843/77.5546" title="Untitled" style="border:none;"></iframe>
+-->
+
+<h2>Live Complaint Data</h2>
+<div class="w3-responsive">
+<table class="w3-table-all" id = "y-table">
+<tr>
+  <th>Complaint ID</th>  
+  <th>Date</th> 
+  <th>Issue</th>
+  <th>Location Of Issue</th>
+  <th>Department</th>
+  <th>Name/Anonymous(Telegram)</th>
+  <th>Contact Complainer</th>
+  <th>Written Details</th>
+  <th>Photo/Video Link</th>
+  <th>Status</th> 
+</tr>
+<tr>
+  <td>1234567890</td>
+  <td>12/4/2024</td>  
+  <td>Broken Street Lights</td>
+  <td>HSR</td>
+  <td>Electricity Department</td>
+  <td>Anjali</td>
+  <td>asharma@gmail.com</td>
+  <td>Light has fallen on ground due to rain</td>
+  <td>yahoo.com/123.png</td>
+  <td>Unattended</td>
+</tr>
+<tr>
+   <td>a1234567890</td> 
+   <td>18/9/2024</td>   
+  <td>Garbage Dumping</td>
+  <td>123 Madiwala Road, Koramangala, Bangalore, India</td>
+  <td>Municipal Corporation</td>
+  <td>Telegram</td>
+  <td>@avi247</td>
+  <td>Contruction Garbage Dumped for 1 Month</td>
+  <td>googledrive.com/123.mp4</td>
+  <td>Resolved</td>
+</tr>
+<tr>
+    <td>b1234567899</td> 
+    <td>10/8/2020</td>   
+   <td>Public Transport</td>
+   <td>37 Bellandur, Bangalore, India</td>
+   <td>Traffic Police</td>
+   <td>Pankaj</td>
+   <td>+91 9903493064</td>
+   <td>Over Croweded Buses on Route 10 @ 6 PM</td>
+   <td>Dropbox.com/123.png</td>
+   <td>New</td>
+</tr>
+</table>
+
+</div>
+
+</div>
+
+<div id="id01" class="w3-modal" style="text-align:center;"">
+    <div class="w3-modal-content w3-card-4">
+      <header class="w3-container w3-blue"> 
+        <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+        <h2>Congratulations</h2>
+      </header>
+      <div class="w3-container">
+        <p><img src="./images/congrats.png" style="width: 64px; height: 64px;"/></p>
+        <p>Your Complaint Has Been Submitted Successfully.</p>
+      </div>
+      <footer class="w3-container w3-teal">
+        <p>Click Close(X) Button On Top To Continue!</p>
+      </footer>
+    </div>
+  </div>
+
+<script>
+// Accordion 
+function myAccFunc() {
+  var x = document.getElementById("demoAcc");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+
+// Open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+</script>
+
+<!-- 
+<script src="./geminitest2.js"></script>
+-->
+</body>
+</html>
