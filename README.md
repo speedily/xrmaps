@@ -2,7 +2,7 @@
 
 Developed By Abhishek Jha  aka **Speedily**. 
 If you want to learn about XRMaps - Its The Internal Name Of Havoc - City Ai and RTCMS, you can read me. 
-If you want to play with Markdown, you can edit me. Once you have finished with me, you can create new files by opening the **file explorer** on the left corner of the navigation bar.
+If you want to play with Markdown, you can edit me. Once you have finished with me, you can create new files by opening the **file explorer** on the left corner of the navigation bar..
 
 
 # Files
